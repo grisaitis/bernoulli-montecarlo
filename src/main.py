@@ -93,8 +93,11 @@ class Test( object ):
         print scores
 
 if __name__ == '__main__':
+    t_start = time.time()
     t = Test( probabilities )
     for _ in range( 100000 ):
         t.run()
     t.report_results()
+    t_end = time.time()
+    print "%.10f seconds" % ( t_end - t_start )
     
