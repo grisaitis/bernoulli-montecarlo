@@ -26,6 +26,7 @@ Created on Aug 1, 2012
 '''
 
 import random
+import time
 
 '''
 Outcomes: 
@@ -72,26 +73,22 @@ class Algo2( Algo ):
 
 class Test( object ):
     def __init__( self, probabilities ):
-        self.outcome_generator = RandomProcess( probabilities )
-#        self.algos = [cla( probabilities ) for cla in Algo.__subclasses__()]
+        self.random_process = RandomProcess( probabilities )
         self.algos = dict( ( algo.__name__, algo( probabilities ) ) for algo in Algo.__subclasses__() )
-        self.outcomes = []
         self.predictions = dict( ( algo, [] ) for algo in self.algos )
     
     def run( self ):
-        self.outcomes.append( self.outcome_generator.generate_outcome() )
         for algo in self.algos:
             self.predictions[algo].append( self.algos[algo].predict() )
     
     def report_results( self ):
-        outcomes = self.outcomes
+        generate_outcome = self.random_process.generate_outcome
         scores = dict( ( algo, 0 ) for algo in self.algos )
-        # process data...
-        # tally up correct answers!
         for algo in self.algos:
             predictions = self.predictions[algo]
-            for ( pred, outc ) in zip( predictions, outcomes ):
-                if pred == outc:
+            for pred in predictions:
+                if generate_outcome() == pred:
+                    # tally up correct answers!
                     scores[algo] += 1
         print scores
 
