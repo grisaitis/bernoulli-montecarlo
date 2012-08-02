@@ -37,10 +37,10 @@ Probabilities:
 probabilities = {0:0.7, 1:0.3}  # {outcome: probability}
 # 1 is redundant here, but I want to preserve the possiblity of extending this to more than just 2 outcomes.
 
-class Outcome( object ):
+class RandomProcess( object ):
     def __init__( self, probabilities ):
         self.probabilities = probabilities
-    def generate( self ):
+    def generate_outcome( self ):
         pick = random.uniform( 0, 1 )
         tmp = 0
         for outcome, p in probabilities.iteritems():
@@ -72,33 +72,32 @@ class Algo2( Algo ):
 
 class Test( object ):
     def __init__( self, probabilities ):
-        self.outcome_generator = Outcome( probabilities )
-        self.algos = [cla( probabilities ) for cla in Algo.__subclasses__()]
+        self.outcome_generator = RandomProcess( probabilities )
+#        self.algos = [cla( probabilities ) for cla in Algo.__subclasses__()]
+        self.algos = dict( ( algo.__name__, algo( probabilities ) ) for algo in Algo.__subclasses__() )
         self.outcomes = []
-        self.predictions = dict( ( algo.__class__.__name__, [] ) for algo in self.algos )
+        self.predictions = dict( ( algo, [] ) for algo in self.algos )
     
     def run( self ):
-        self.outcomes.append( self.outcome_generator.generate() )
+        self.outcomes.append( self.outcome_generator.generate_outcome() )
         for algo in self.algos:
-            self.predictions[algo.__class__.__name__].append( algo.predict() )
+            self.predictions[algo].append( self.algos[algo].predict() )
     
     def report_results( self ):
         outcomes = self.outcomes
-        scores = dict( ( algo.__class__.__name__, 0 ) for algo in self.algos )
+        scores = dict( ( algo, 0 ) for algo in self.algos )
         # process data...
         # tally up correct answers!
         for algo in self.algos:
-            print algo.__class__.__name__
-            predictions = self.predictions[algo.__class__.__name__]
+            predictions = self.predictions[algo]
             for ( pred, outc ) in zip( predictions, outcomes ):
                 if pred == outc:
-                    scores[algo.__class__.__name__] += 1
+                    scores[algo] += 1
         print scores
 
 if __name__ == '__main__':
     t = Test( probabilities )
-    for _ in range( 1000 ):
+    for _ in range( 100000 ):
         t.run()
     t.report_results()
-    print "done" 
     
