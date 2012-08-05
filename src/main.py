@@ -10,7 +10,7 @@ This runs a trial to test this computationally.
 
 Spoiler alert: I did the napkin algebra... and making the same guess every time really is the best algorithm. Interesting.
 
-Basically, it comes down to this:
+The problem can be summarized thus:
     - Givens:
         * Two outcomes are possible: "A" or "not A"
         * P(outcome = "A") = p
